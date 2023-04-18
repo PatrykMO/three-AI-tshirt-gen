@@ -13,12 +13,9 @@ import { Color } from 'three';
 
 const Customizer = () => {
   const snap = useSnapshot(state);
-
   const [file, setFile] = useState('');
-
   const [prompt, setPrompt] = useState('');
   const [generatingImg, setGeneratingImg] = useState(false);
-
   const [activeEditorTab, setActiveEditorTab] = useState('');
   const [activeFilterTab, setActiveFilterTab] = useState({
     logoShirt: true,
@@ -37,9 +34,42 @@ const Customizer = () => {
           readFile={readFile}
         />
       case 'aipicker':
-        return <AIPicker /> 
+        return <AIPicker 
+          prompt={prompt}
+          setPrompt={setPrompt}
+          generatingImg={generatingImg}
+          handleSubmit={handleSubmit}
+        /> 
       default:
         return null;
+    }
+  }
+
+  const handleSubmit = async (type) => {
+    if(!prompt) return alert('Enter the prompt.');
+
+    try {
+      // call backend to generate an ai image
+      setGeneratingImg(true);
+
+      const response = await fetch('http://localhost:5000/api/v1/dalle', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          prompt,
+        })
+      })
+
+      const data = await response.json();
+
+      handleDecals(type, `data:image/png;base64,${data.photo}`)
+    } catch (error) {
+      alert(error);
+    } finally {
+      setGeneratingImg(false);
+      setActiveEditorTab('');
     }
   }
 
@@ -54,7 +84,16 @@ const Customizer = () => {
       default:
         state.isLogoTexture = true;
         state.isFullTexture = false;
+        break;
     }
+
+    // activeFilterTab update
+    setActiveFilterTab((prevState) => {
+      return {
+        ...prevState,
+        [tabName]: !prevState[tabName]
+      }
+    })
   }
   
   const handleDecals = (type, result) => {
@@ -121,8 +160,8 @@ const Customizer = () => {
                     key={tab.name}
                     tab={tab}
                     isFilterTab
-                    isActiveTab=''
-                    handleClick={() => {}}
+                    isActiveTab={activeFilterTab[tab.name]}
+                    handleClick={() => handleActiveFilterTab(tab.name)}
                   />
             ))}
           </motion.div>

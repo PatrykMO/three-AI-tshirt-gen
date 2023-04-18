@@ -20,7 +20,7 @@ const Home = () => {
         <motion.section className='home' {...slideAnimation('left')}>
           <motion.header {...slideAnimation('down')}>
             <img 
-              src='./threejs.png'
+              src='./logo.png'
               alt='logo'
               className='w-8 h-8 object-contain'
             />
@@ -38,7 +38,7 @@ const Home = () => {
               
               <CustomButton
                 type='filled'
-                title='Customize It'
+                title='Create TEE'
                 handleClick={() => state.intro = false}
                 customStyles='w-fit px-4 py-2.5 font-bold text-sm' 
               />
