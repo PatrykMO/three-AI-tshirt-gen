@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSnapshot } from 'valtio';
 
 import config from '../config/config';
 import state from '../store';
-import { download } from '../assets';
-import { downloadCanvasToImage, reader } from '../config/helpers';
+import { reader } from '../config/helpers';
 import { EditorTabs, FilterTabs, DecalTypes } from '../config/constants';
 import { fadeAnimation, slideAnimation } from '../config/motion';
 import { AIPicker, ColorPicker, CustomButton, Tab, FilePicker } from '../components';
-import { Color } from 'three';
 
 const Customizer = () => {
   const snap = useSnapshot(state);
@@ -52,7 +50,7 @@ const Customizer = () => {
       // call backend to generate an ai image
       setGeneratingImg(true);
 
-      const response = await fetch('http://localhost:5000/api/v1/dalle', {
+      const response = await fetch(config.development.backendUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
