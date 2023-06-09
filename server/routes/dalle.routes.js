@@ -12,11 +12,18 @@ const config = new Configuration({
 
 const openai = new OpenAIApi(config);
 
-router.route('/').get((req, res) => {
-    res.status(200).json({message: 'Hello from DALL.E Routes'})
+
+router.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://ai-tees.tech');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
 });
 
-router.route('/').post( async (req, res) => {
+router.route('/').get((req, res) => {
+    res.status(200).json({ message: 'Hello from DALL.E Routes' })
+});
+
+router.route('/').post(async (req, res) => {
     try {
         const { prompt } = req.body;
 
@@ -32,7 +39,7 @@ router.route('/').post( async (req, res) => {
         res.status(200).json({ photo: image })
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: 'Something went wrong'})
+        res.status(500).json({ message: 'Something went wrong' })
     }
 });
 
